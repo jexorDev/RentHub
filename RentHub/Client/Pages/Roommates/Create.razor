@@ -1,0 +1,16 @@
+﻿@page "/roommates/create"
+@using RentHub.Shared
+@inject HttpClient http
+@inject NavigationManager uriHelper
+<h3>Create</h3>
+<Form ButtonText="Create Roommate" roommate="@roommate"
+            OnValidSubmit="@CreateRoommate" />
+@code {
+    Roommate roommate = new Roommate();
+
+    async Task CreateRoommate()
+    {
+        await http.PostAsJsonAsync("api/roommate", roommate);
+        uriHelper.NavigateTo("roommates");
+    }
+}

@@ -1,0 +1,29 @@
+﻿@page "/expenses/create"
+@using RentHub.Shared
+@using RentHub.Shared.Expenses
+@inject HttpClient client
+@inject NavigationManager uriHelper
+<h3>Create</h3>
+<Form ButtonText="Create Expense" expense="@expense" roommates="@roommates"
+            OnValidSubmit="@CreateExpense" />
+@code {
+    Expense expense = new Expense();
+
+    private Roommate[] roommates { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        roommates = await client.GetFromJsonAsync<Roommate[]>("api/roommate");
+        expense.BuyerId = roommates.FirstOrDefault().Id;
+        expense.DatePurchased = DateTime.Today;
+        //expense.BillTos = new List<ExpenseBillTo>() {  };
+    }
+
+    async Task CreateExpense()
+    {
+        await client.PostAsJsonAsync("api/expense", expense);
+        uriHelper.NavigateTo("expenses");
+    }
+
+
+}

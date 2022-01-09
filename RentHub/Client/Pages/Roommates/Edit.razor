@@ -1,0 +1,26 @@
+﻿@page "/roommates/edit/{id:int}"
+@using RentHub.Shared
+@inject HttpClient http
+@inject NavigationManager uriHelper
+@inject IJSRuntime js
+
+<h3>Edit</h3>
+<Form ButtonText="Update" roommate="roommate"
+      OnValidSubmit="@EditRoommate" />
+@code {
+    [Parameter] public int id { get; set; }
+
+    Roommate roommate = new Roommate();
+
+    protected async override Task OnParametersSetAsync()
+    {
+        roommate = await http.GetFromJsonAsync<Roommate>($"api/roommate/{id}");
+    }
+
+    async Task EditRoommate()
+    {
+        await http.PutAsJsonAsync("api/roommate", roommate);
+        await js.InvokeVoidAsync("alert", $"Updated Successfully!");
+        uriHelper.NavigateTo("roommates");
+    }
+}

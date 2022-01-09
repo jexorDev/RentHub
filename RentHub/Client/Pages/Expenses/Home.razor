@@ -1,0 +1,65 @@
+﻿@page "/expenses"
+@using RentHub.Shared
+@using RentHub.Shared.Expenses
+@inject HttpClient client
+@inject IJSRuntime js
+
+<h3>View Expenses</h3>
+
+@if (expensesList == null)
+{
+    <text>Loading...</text>
+}
+else if (expensesList.Length == 0)
+{
+    <text>No Records Found.</text>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Cost per person</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Expense expense in expensesList)
+            {
+                <tr>
+                    <td>@expense.Description</td>
+                    <td>@expense.DatePurchased</td>
+                    <td>@expense.SplitCost</td>
+                    <td>
+                        <button class="btn btn-danger" @onclick="@(() => Delete(expense.Id))">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<div>
+    <a class="btn btn-success" href="expenses/create"><i class="oi oi-plus"></i> Create New</a>
+</div>
+
+@code {
+    Expense[] expensesList { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        expensesList = await client.GetFromJsonAsync<Expense[]>("api/expense");
+    }
+  
+    async Task Delete(int id)
+    {
+        var roommate = expensesList.First(x => x.Id == id);
+        if (await js.InvokeAsync<bool>("confirm", $"Delete {roommate.Description}?"))
+        {
+            await client.DeleteAsync($"api/expense/{id}");
+            await OnInitializedAsync();
+        }
+    }
+}

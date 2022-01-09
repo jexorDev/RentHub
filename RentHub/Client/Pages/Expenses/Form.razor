@@ -1,0 +1,71 @@
+﻿@using RentHub.Shared
+@using RentHub.Shared.Expenses
+@inject HttpClient client
+
+<EditForm Model="@expense" OnValidSubmit="@OnValidSubmit">
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <label>Description</label>
+        <div>
+            <InputText @bind-Value="@expense.Description" />
+            <ValidationMessage For="@(() => expense.Description)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <div>
+            <label>Date</label>
+            <div>
+                <InputDate @bind-Value="@expense.DatePurchased" />
+                <ValidationMessage For="@(() => expense.DatePurchased)" />
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div>
+            <label>Quantity</label>
+            <div>
+                <InputNumber @bind-Value="@expense.Quantity" />
+                <ValidationMessage For="@(() => expense.Quantity)" />
+            </div>
+        </div>
+    </div>
+     <div class="form-group">
+        <div>
+            <label>Cost</label>
+            <div>
+                <InputNumber @bind-Value="@expense.TotalCost" />
+                <ValidationMessage For="@(() => expense.TotalCost)" />
+            </div>
+        </div>
+    </div>
+     <div class="form-group">
+        <div>
+            <label>Buyer</label>
+            <div>
+                <InputSelect @bind-Value="expense.BuyerId" >
+                    @foreach (Roommate roommate in roommates)
+                    {
+                        <option value="@roommate.Id">@roommate.Name</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => expense.BuyerId)" />
+            </div>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-success">
+        @ButtonText
+    </button>
+</EditForm>
+@code {
+    [Parameter] public Expense expense { get; set; }
+    [Parameter] public Roommate[] roommates { get; set; }
+    [Parameter] public string ButtonText { get; set; } = "Save";
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+
+    //private Roommate[] roommates { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        //roommates = await client.GetFromJsonAsync<Roommate[]>("api/roommate");
+    }
+}
