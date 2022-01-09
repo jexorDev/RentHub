@@ -1,7 +1,4 @@
-using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.EntityFrameworkCore;
 using RentHub.Server.Data;
-using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
